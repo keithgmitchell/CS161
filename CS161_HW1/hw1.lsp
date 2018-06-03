@@ -1,0 +1,343 @@
+;;;; HW1
+;;;; Keith Mitchell-704281781
+;;;; CS161
+;;;; Discussion 1D (SHI, F)
+
+
+;;;;An ordered tree is either a number n or a list (L m R), where 
+;;;;    L and R are ordered trees
+;;;;    m is a number
+;;;;    all numbers appearing in L are smaller than m
+;;;;    all numbers appearing in R are larger than m
+
+;;;;Example Trees: : 3, (1 2 3), ((1 2 3) 7 8), ((1 2 3) 5 (6 8 (9 10 (11 12 13))))
+;;;;(used for testing throughout the problem set)
+;;;----------------------------------------------------------------------------------------------------------------
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 1
+(print "-----------------------------")
+(print "PROBLEM 1")
+
+;;;DESCRIPTION:
+;;;  Write a single Boolean LISP function, called TREE-CONTAINS, which takes two arguments N and
+;;;  TREE, and checks whether number N appears in the ordered tree TREE
+
+(defun TREE-CONTAINS (N TREE)
+    (if (not (NULL N));double check for a valid N
+        (cond ((NULL TREE) NIL) ;first check for an empty TREE value which would yield an automatic NIL
+              ((numberp TREE) (equal TREE N)) ;check if TREE is number (individual) and therefore the base case
+
+              ;;recursive call to the TREE-CONTAINS fuction spliting up the ordered tree
+              ;;    or is used here because then any three of that return T, means the N is contained in TREE
+              ;;    or extends so that if any of the children in any of the branches returns T for base the function=T
+              (t (or (TREE-CONTAINS N (first TREE))(TREE-CONTAINS N (second TREE)) (TREE-CONTAINS N (third TREE))))
+        )
+))
+
+;;;Test Cases for Problem 1
+(print "PROBLEM 1 CASES")
+(format t "1. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+(format t "2. Returns T  = ~a ~%" (TREE-CONTAINS 3 3))
+(format t "3. Returns T  = ~a ~%" (TREE-CONTAINS 3 '((1 2 3) 7 8)))
+(format t "4. Returns NIL  = ~a ~%" (TREE-CONTAINS 4 '((1 2 3) 7 8)))
+(format t "5. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+(format t "6. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 2
+(print "-----------------------------")
+(print "PROBLEM 2")
+
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called TREE-MAX, which takes one argument TREE, and returns the
+;;;    maximum number appearing in the ordered tree TREE.
+
+(defun TREE-MAX (TREE)
+    (cond ((NULL TREE) NIL)
+          ;;base case: will return the highest number in the ordered tree
+          ((not (listp TREE)) TREE);if function is not longer a list (individual) base case
+
+          ;; recursive call to the furthest right postion in the ordered tree (highest)
+          (t (TREE-MAX (third TREE)))
+))
+
+;;;Test Cases for Problem 2
+(print "PROBLEM 2 CASES")
+(format t "1. Returns 8  = ~a ~%" (TREE-MAX '((1 2 3) 7 8)))
+(format t "2. Returns 10  = ~a ~%" (TREE-MAX '((1 2 3) 7 (8 9 10))))
+(format t "3. Returns 12  = ~a ~%" (TREE-MAX '((1 2 3) 7 (8 9 (10 11 12)))))
+(format t "4. Returns 13  = ~a ~%" (TREE-MAX '((1 2 3) 5 (6 8 (9 10 (11 12 13))))))
+(format t "5. Returns 3  = ~a ~%" (TREE-MAX '(1 2 3)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 3
+(print "-----------------------------")
+(print "PROBLEM 3")
+
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called TREE-ORDER, which takes one argument TREE, and returns an
+;;;    in-ordered list of the numbers appearing in the ordered tree TREE  
+
+(defun TREE-ORDER (TREE)
+    (cond ((NULL TREE) NIL) ;check to make sure that the tree is not empty
+
+          ;;base check, to see if a number is all that is left in the tree
+          ((numberp TREE) (cons TREE NIL)) 
+
+          ;;if >1 (not number) append TREE-ORDER of each of the items in the tree to a list
+          ;;    this recursive call will ensure that any list with in the tree are continuosly broken down
+          (t (append (TREE-ORDER (first TREE)) (TREE-ORDER(second TREE)) (TREE-ORDER(third TREE))))
+))
+
+;;;Test Cases for Problem 3
+(print "PROBLEM 3 CASES")
+(format t "1. Returns (1 2 3 7 8)  = ~a ~%" (TREE-ORDER '((1 2 3) 7 8)))
+(format t "2. Returns (1 2 3 7 8 9 10) = ~a ~%" (TREE-ORDER '((1 2 3) 7 (8 9 10))))
+(format t "3. Returns (1 2 3 7 8 9 10 11 12)  = ~a ~%" (TREE-ORDER '((1 2 3) 7 (8 9 (10 11 12)))))
+(format t "4. Returns (1 2 3 7 8 9 10 11 12 13)  = ~a ~%" (TREE-ORDER '((1 2 3) 5 (6 8 (9 10 (11 12 13))))))
+(format t "5. Returns (1 2 3)  = ~a ~%" (TREE-ORDER '(1 2 3)))
+(format t "6. Returns (1 2)  = ~a ~%" (TREE-ORDER '(1 2)))
+(format t "7. Returns (1 2 3 7 8)  = ~a ~%" (TREE-ORDER '((1 2 3) 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 4
+(print "-----------------------------")
+(print "PROBLEM 4")
+
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called SUB-LIST, that takes a list L and two non-negative integers
+;;;    START and LEN, and returns the sub-list of L starting at position START and having length LEN. Assume
+;;;    that the first element of L has position 0.
+
+(defun SUB-LIST (L START LEN)
+    (cond ((NULL L) NIL) ; if the list L is NULL then no numbers will be returned
+          
+          ;;base case since when last cond call SUB-LIST this will end recursive call and return nill
+          ((or (NULL LEN) (equal LEN 0)) NIL) ;if the len of the list to be retrieved is NULL then 
+          
+          ;;check if L is just an individual item then just return it rather then a list
+          ((equal (length L) 1) L) ;return just the number L if the no longer a list
+          
+          ;;look for the start of where the sequence should begin by popping front and decreasing START
+          ((not(equal START 0))
+              (SUB-LIST (cdr L) (- START 1) LEN)) ;first get rid of everything up to the start int of list 
+          
+          ;;now if LEN is not 0 then this means that we will grab the front of the list and recursive call SUB-LIST
+          ((not(equal LEN 0)) ;then recursively add/return to list for length LEN
+              (cons (car L)(SUB-LIST(cdr L) START (- LEN 1)))) ;use cons to construct final list one part at a time
+          (t NIL)
+))
+
+
+
+;;;Test Cases for Problem 4
+(print "PROBLEM 4 CASES")
+(format t "1. Returns (a b c)  = ~a ~%" (SUB-LIST '(a b c d) 0 3))
+(format t "2. Returns (d)  = ~a ~%" (SUB-LIST '(a b c d) 3 1))
+(format t "3. Returns NIL  = ~a ~%" (SUB-LIST '(a b c d) 2 0))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 5
+(print "-----------------------------")
+(print "PROBLEM 5")
+
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called SPLIT-LIST, that takes a list L, and returns a list of two lists L1 and
+;;;    L2, in that order, such that
+;;;      - L is the result of appending L1 and L2;
+;;;      - Length of L2 minus length of L1 is 0 or 1.
+
+(defun SPLIT-LIST (L)
+   (cond ((NULL L) NIL) ;check to see if list L to split is NULL
+         (t (cond ((evenp (length L)) ;if the length of L is even divide by 2 and and call SUB-LIST to cut and list
+                      (list (SUB-LIST L 0 (/ (length L) 2)) (SUB-LIST L (/ (length L) 2) (/ (length L) 2))))
+                
+                  ;;if the length of L is odd divide by L and call SUB-LIST with second half taking the extra
+                  ((oddp (length L))
+                     (list (SUB-LIST L 0 (/ (- (length L) 1) 2)) (SUB-LIST L (/ (- (length L) 1) 2) (/ (+ (length L) 1) 2))))
+          )
+       )
+))
+
+
+;;;Test Cases for Problem 5
+;(print "PROBLEM 5 CASES")
+(format t "1. Returns a (b c)  = ~a ~%"(SPLIT-LIST '(a b c)))
+(format t "2. Returns (a b) (c d)  = ~a ~%"(SPLIT-LIST '(a b c d)))
+(format t "3. Returns (a b) (c d e)  = ~a ~%" (SPLIT-LIST '(a b c d e))) 
+(format t "4. Returns (a b c) (d e f)  = ~a ~%" (SPLIT-LIST '(a b c d e f)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 6
+(print "-----------------------------")
+(print "PROBLEM 6")
+
+;;;DESCRIPTION:     
+;;;    Write a single LISP function, called BTREE-HEIGHT, which takes a binary tree TREE, and returns the
+;;;    height of TREE. Note that the height of a binary tree is defined as the length of the longest path from the
+;;;    root node to the farthest leaf node.esult of appending L1 and L2;
+;;;
+
+;;;NOTE:
+;;;    Since this is a binary tree that means we just have to compare the left and right side basically just 
+;;;    have to compare the two sides in a recursive call until finally the taller side is returned.
+;;;
+;;;    If the first side of the tree (or any portion of it) is greater then use that one, otherwise by default call other side.
+
+
+(defun BTREE-HEIGHT (TREE)
+  (cond ((NULL TREE) NIL) ;first check for an empty TREE value which would yield an automatic NIL
+
+        ;;base case since the height of a just a number is 0. 
+        ((and (not (listp TREE)) (numberp TREE)) 0) ;check if TREE is number (individual) and not a list and heigh is 0
+
+        ;;check if one side of the tree still has levels to go (not 0) and continue to expand/increment with recursive call
+        ;;    split the the to first and second since only a binary tree
+        ;;    if >= by default will perform an expansion on either of the two sides since they are equal
+        ((> (BTREE-HEIGHT (second TREE)) (BTREE-HEIGHT (first TREE))) (+ (BTREE-HEIGHT (second TREE)) 1 ))
+        ((>= (BTREE-HEIGHT (first TREE)) (BTREE-HEIGHT (second TREE))) (+ (BTREE-HEIGHT (first TREE)) 1 ))
+))
+
+;;;Test Cases for Problem 6
+;(print "PROBLEM 6 CASES")
+(format t "1. Returns 0 = ~a ~%" (BTREE-HEIGHT 1))
+(format t "2. Returns 1 = ~a ~%" (BTREE-HEIGHT '(1 2)))
+(format t "3. Returns 2 = ~a ~%" (BTREE-HEIGHT '(1 (2 3))))
+(format t "4. Returns 2 = ~a ~%" (BTREE-HEIGHT '((1 2) (3 4))))
+(format t "5. Returns 3 = ~a ~%" (BTREE-HEIGHT '((1 (2 3)) ((4 5) (6 7)))))
+(format t "6. Returns 4 = ~a ~%" (BTREE-HEIGHT '(((1 2) ((1 2) (3 4))) ((5 6) (7 8)))))
+(format t "7. Returns 3 = ~a ~%" (BTREE-HEIGHT '(((1 2) (3 4)) ((5 6) (7 8)))))
+(format t "8. Returns 4 = ~a ~%" (BTREE-HEIGHT '(((5 6) (7 8)) ((1 2) ((1 2) (3 4))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 7
+(print "-----------------------------")
+(print "PROBLEM 7")
+
+;;;DESCRIPTION:     
+;;;    Write a single LISP function, called LIST2BTREE, that takes a non-empty list of atoms LEAVES, and
+;;;    returns a binary tree such that
+;;;        - The tree leaves are the elements of LEAVES;
+;;;        - For any internal (non-leaf) node in the tree, the number of leaves in its right branch minus the
+;;;          number of leaves in its left branch is 0 or 1.
+;;;
+
+
+(defun LIST2BTREE (LEAVES)
+  (cond ((NULL LEAVES) NIL) ;first check for an empty TREE value which would yield an automatic NIL
+        ((= (length LEAVES) 1) (car LEAVES)) ;if the length of leaves is 0 then return 1 
+        ((= (length LEAVES) 2) LEAVES)
+        ;;recursive call to create a list by splitting the LEAVES and 
+        (t (let* ((tempList (SPLIT-LIST LEAVES)) (L1 (LIST2BTREE (first tempList)))
+                  (L2 (LIST2BTREE (second tempList))))(list L1 L2)))
+))
+
+;;;Test Cases for Problem 7
+(print "PROBLEM 7 CASES")
+(format t "1. Returns 1 = ~a ~%" (LIST2BTREE '(1)))
+(format t "2. Returns (1 2) = ~a ~%" (LIST2BTREE '(1 2)))
+(format t "3. Returns (1 (2 3)) = ~a ~%" (LIST2BTREE '(1 2 3)))
+(format t "4. Returns ((1 2) (3 4)) = ~a ~%" (LIST2BTREE '(1 2 3 4)))
+(format t "5. Returns ((1 (2 3)) ((4 5) (6 7)))  = ~a ~%" (LIST2BTREE '(1 2 3 4 5 6 7)))
+(format t "6. Returns (((1 2) (3 4)) ((5 6) (7 8))) = ~a ~%" (LIST2BTREE '(1 2 3 4 5 6 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 8
+(print "-----------------------------")
+(print "PROBLEM 8")
+
+;;;DESCRIPTION:     
+;;;   Write a single LISP function, called BTREE2LIST, that takes a binary tree TREE as input, and returns a
+;;;   list of atoms (assume TREE follows the constraints we defined earlier).
+;;;       - As the input is a binary tree, each node has at most 2 children;
+;;;       - This function is the inverse of LIST2BTREE. That is, (BTREE2LIST (LIST2BTREE X)) = X for all
+;;;         lists of atoms X.
+;;;
+;;;NOTE:
+;;;    Since this is a binary tree that means that we only need to check a first and second part
+
+(defun BTREE2LIST (TREE)
+  (cond ((NULL TREE) NIL) ;first check for an empty TREE value which would yield an automatic NIL
+
+        ;;then check the base case where we have a number to continue to return indivdual list with one number to append
+        ((and (not(listp TREE)) (numberp TREE)) (cons TREE NIL)) ;then check base case where we get a number 
+
+        ;;continue to split the tree and expand until the original number are appended in the recursive call and returned
+        (t (append (BTREE2LIST (first TREE)) (BTREE2LIST (second TREE))))
+))
+
+;;;Test Cases for Problem 8
+(print "PROBLEM 8 CASES")
+(format t "1. Returns (1) = ~a ~%" (BTREE2LIST 1))
+(format t "2. Returns (1 2) = ~a ~%"(BTREE2LIST '(1 2)) )
+(format t "3. Returns (1 2 3) = ~a ~%"(BTREE2LIST '(1 (2 3))) )
+(format t "4. Returns (1 2 3 4) = ~a ~%" (BTREE2LIST '((1 2) (3 4))))
+(format t "5. Returns (1 2 3 4 5 6 7)  = ~a ~%" (BTREE2LIST '((1 (2 3)) ((4 5) (6 7)))))
+(format t "6. Returns (1 2 3 4 5 6 7 8) = ~a ~%" (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))))
+(format t "7. Returns (1 2 1 2 3 4 5 6 7 8) = ~a ~%" (BTREE2LIST '(((1 2) ((1 2) (3 4))) ((5 6) (7 8)))))
+(format t "8. Returns (1 2 3 4 5 6 7 8) = ~a ~%" (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))))
+(format t "9. Returns (5 6 7 8 1 2 1 2 3 4) = ~a ~%" (BTREE2LIST '(((5 6) (7 8)) ((1 2) ((1 2) (3 4))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 9
+(print "-----------------------------")
+(print "PROBLEM 9")
+
+;;;DESCRIPTION:     
+;;;   Write a single Boolean LISP function, called IS-SAME, that takes two LISP expressions E1 and E2
+;;;   whose atoms are all numbers, and checks whether the expressions are identical. In this question, you can
+;;;   only use = to test equality (you cannot use equal). Recall that a LISP expression is either an atom or a
+;;;   list of LISP expressions.
+;;;
+
+(defun IS-SAME (E1 E2)
+  (cond ((and (NULL E1) (NULL E2)) T) ;base check to see if cdr E1 and cdr E2 are NULL (end) at the same point
+
+        ;;call IS-SAME and check if the first part are atoms and if the rest atoms are the same 
+        ;;   then recursive call with the rest of E1 and E2
+        ((and (and (atom (first E1)) (atom (first E2)))(equal (car E1) (car E2))) (IS-SAME (cdr E1) (cdr E2)))
+        
+        ;;call IS-SAME and check if the first part of the list is the same and the rest of the lists are the same
+        ;;    lists are broken up and get checked with recursive call for atoms
+        ((and (and (listp (first E1)) (listp (first E2)))(IS-SAME (first E1) (first E2))) (IS-SAME (cdr E1) (cdr E2)))
+
+        (t NIL)
+))
+
+;;;Test Cases for Problem 9
+(print "PROBLEM 9 CASES")
+(format t "1. Returns T = ~a ~%" (IS-SAME '((1 2 3) 7 8) '((1 2 3) 7 8)))
+(format t "2. Returns NIL = ~a ~%" (IS-SAME '((1 2) (3 7) 8) '((1 2 3) 7 8)))
+(format t "3. Returns T = ~a ~%" (IS-SAME '((1 2 3) 7 8) '((1 2 3) 7 8)))
+(format t "4. Returns NIL = ~a ~%"(IS-SAME '(1 2 3 7 8) '((1 2 3) 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

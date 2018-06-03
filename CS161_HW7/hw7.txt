@@ -1,0 +1,103 @@
+Keith Mitchell
+HW7 CS 161
+11/25/17
+
+
+
+1) 
+Prove the generalized product rule: 
+{ Pr(A, B | K) = Pr(A | B, K) * Pr(B | K) }
+	- Pr(A, B| K) = 
+				Pr(A, B, K) / Pr(K)
+	- Pr(A, B, K) / Pr(K) = 
+				[Pr(A | B, K) * Pr(B, K)] / Pr(K)
+	- [Pr(A | B, K) * Pr(B, K)] / Pr(K) = 
+				[Pr(A | B, K) * Pr(B | K) * Pr(K)] / Pr(K)
+	- [Pr(A | B, K) * Pr(B|K) * Pr(K)] / Pr(K) = 
+				Pr(A | B, K) * Pr(B|K)
+
+Prove the generalized Bayes' rule:
+{ Pr(A | B, K) = P(B | A, K) * Pr(A | K) / Pr(B | K) }
+
+    - Pr(A | B, K) = 
+    			Pr(B | K) * Pr(A, B | K)
+    - Pr(B | K) * Pr (A, B | K) = 
+    			P(A, B, K) * P(B | K) / Pr(K)
+    - P(A, B, K) * P(B | K) / Pr(K) = 
+    			P(B | A, K) * P(A, K) * P(B | K) / Pr(K)
+    - P(B | A, K) * P(A, K) * P(B | K) / Pr(K) = 
+    			[P(B | A, K) * P(A | K) * P(B | K) * Pr(K)] / Pr(K)
+    - [P(B | A, K) * P(A | K) * P(B | K) * Pr(K)] / Pr(K) = 
+    			P(B | A, K) * Pr(A | K) / Pr(B | K)
+
+
+
+
+2) Cause  -> Effect 
+   Coin can be coin A, B or C
+
+   Coin -> X_1, X_2, X_3
+
+   C   |   P(C)             C    |   X_i    |  P(X_i | C)
+   -------------           --------------------------------
+   a   |   0.333            a    |   heads  |    0.2
+   b   |   0.333 			b    |   heads  |    0.6
+   c   |   0.333            c    |   heads  |    0.8
+
+
+
+
+3) Mr. Y picked up an object at random from the above set. 
+We want to compute the probabilities of the following events.
+
+Variables: B = black, W = white, S = square, C = circle
+
+	- alpha_1 = P(B) = Number of B/ Total number 
+					 = Number of B/ (Number of B + Number of W)
+					 = 9 / 13
+
+	- alpha_2 = P(S) = Number of S/ Total number
+					 = Number of S/ (Number of S + Number of C)
+					 = 8 / 13
+	- alpha_3 = P(S | P(1) or P(B)) 
+					 = Number of S that are 1 or B / Num 1's + Num B's - (Num of 1's and B's)
+	          		 = 7 / (5 + 9 - 3)
+	          		 = 7 / 11
+
+
+
+4)
+	A) Markovian Assumptions
+	   I (x, parents(x), non-descendants(x))
+	   I (A, NULL, BE)
+	   I (B, NULL, AC)
+	   I (C, A, BDE)
+	   I (D, AB, EC)
+	   I (E, B, ACDFG)
+	   I (F, CD, ABE)
+	   I (G, F, ABCDEH)
+	   I (H, FE, ABCDG)
+
+	B) True or False?  
+	     d separated(A, BH, E) is false, path ACFHE
+         d separated(G, D, E) is false, path GFHE
+         d separated(AB, F, GH) is false, path BEH
+
+    C)  Express Pr(a, b, c, d, e, f, g, h) in factored form
+        using the chain rule for Bayesian networks.
+          Pr(a | b, c, d, e, f, g, h) * \
+          Pr(b | c, d, e, f, g, h) * \
+          Pr(c | d, e, f, g, h) * \
+          Pr(d | e, f, g, h) * \
+          Pr(e | f, g, h) * \
+          Pr(f | g, h) * \
+          Pr(g | h) * \
+          Pr(h) 
+    D) Compute Pr(A = 0, B = 0) and Pr(E = 1 | A = 1). Justify your answers.
+
+    	Pr(A = 0, B = 0) = 0.8 * 0.3 = 0.24 
+    	Pr(E = 1 | A = 1) = 
+    		Pr(E = 1| B = 1) * Pr(B = 1) + 
+    		Pr(E = 1| B = 0) * Pr(B = 0)
+    		= (0.7 * 0.1) + (0.3 * 0.9) = 0.34
+

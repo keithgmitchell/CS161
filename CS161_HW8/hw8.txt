@@ -1,0 +1,138 @@
+﻿Keith Mitchell
+hw8.txt
+704281781
+
+------------------------------------------------------------------------------------------------
+1.
+
+
+A constraint on each of the following, which is sufficient to ensure that P r(D|T) ≥ 0.3:
+The prior probability of having the disease, the false positive for the test, and the false
+negative for the test.
+
+I did not know how to complete this in the SamIam program.
+
+First lets calculate how P(D|T) is about equal to 0.045.
+            D   |  P(D)
+	      ---------------
+	1.a     +      0.001
+	2.a     -      0.999
+
+	       T  |  D  |   P (T|D)
+	      -----------------------
+	1.b     +     -      0.02
+	2.b     -     +      0.05
+	3.b     -     -      0.98
+	4.b     +     +      0.95
+
+		T  |  D  |   P (T,D)
+	      --------------------------------------
+	1.c     +     -      0.999 * 0.02 = 0.01998
+	2.c     -     +      0.001 * 0.05 = 0.00005
+	3.c     -     -      0.999 * 0.98 = 0.97902
+	4.c     +     +      0.001 * 0.95 = 0.00095
+
+    Where D = diseased and T = positive
+
+    P(D=+|T=+) = (p(T=+|D=+) * P(D=+) / P(T=+)
+               = (0.00095) / (0.01998 + 0.00095) = 0.045 about
+
+    So in order to change this we can do a couple of things:
+
+       A) The probability of having the disease: 1% from 0.1%
+
+             P(D=+|T=+) = (p(T=+|D=+) * P(D=+) / P(T=+)
+                        = (0.0095) / (0.0198 + 0.0095) = 0.32 about
+
+            NOTE: There is a smaller possible value for the disease rate
+                  but I could not calculate since I didnt know how in SamIam.
+                  Also the exact value where P(D|T)=.3 could be calculated 
+                  with some simple algebra but the answer above is sufficient
+                  to ensure P(D|T)>=0.3
+
+       B) The false positive for the test: 0.2% from 2%
+
+              P(D=+|T=+) = (p(T=+|D=+) * P(D=+) / P(T=+)
+                        = (0.00095) / (0.001998 + 0.00095) = 0.32 about
+
+            NOTE: There is a larger possible value for the false pos rate
+                  but I could not calculate since I didnt know how in SamIam.
+                  Also the exact value where P(D|T)=.3 could be calculated 
+                  with some simple algebra but the answer above is sufficient
+                  to ensure P(D|T)>=0.3
+
+       C) The false negative for the test: 
+            No such solution exists to make P(D|T)>=0.3
+
+------------------------------------------------------------------------------------------------
+2. 
+
+SAMBOT.NET
+
+A)  Set of variables and their values can be see clearly in the sambot.net file
+B)  Causal structure can be see in the sambot.net file
+C)  EM Learning was performed on the sambot.net file using the sambot.dat file with 5 iterations.
+
+
+i)  The most likely instantiation of all variables given that Sambot has sensed the lights to
+    be on, but has sensed no bark. Explain how you obtained this answer (for partial credit
+	in case you get the wrong answer).
+
+	After running both the MPE and the MAP using SamIam...
+
+        GIVEN: SoundSensor = On
+               LightSensor = Off
+
+            FamilyHome		    =No
+			HearableBarking		=No
+			LightSensorHealth	=OK
+			OutdoorLight		=On
+			SoundSensorHealth	=OK   
+		    Battery				=OK
+			DogBarking			=No
+			DogBowelTrouble		=Yes
+			DogOutside			=Yes
+			ExpectingGuests		=No
+			
+
+
+
+ii) The most likely instantiation of the sensors given that the family is home and no guests
+	are expected. Explain how you obtained this answer (for partial credit in case you get
+	the wrong answer).
+
+	After running both the MPE and the MAP using SamIam...
+
+	    GIVEN: FamilyHome = Yes
+               ExpectingGuests = No
+
+            SoundSensor			=Off
+			HearableBarking		=No
+			LightSensorHealth	=OK
+			OutdoorLight		=On
+			SoundSensorHealth	=OK   
+		    Battery		        =OK
+			DogBarking			=No
+			DogBowelTrouble		=Yes
+			DogOutside			=Yes
+			LightSensor			=Off
+
+iii) The smallest set of variables Z in your network such that the two sensors are independent
+     given Z. Justify your answer based on d-separation.
+
+        D-seperation(LightSensor, [DogOutside, Battery], SoundSensor) = True
+            -There are two routes between the light sensor.
+            -Each of the paths can be d-seperated x->V->y
+            -when V is known then x and y are independent.
+
+        or similarly...
+
+        D-seperation(LightSensor, [DogBarking, Battery], SoundSensor) = True
+        D-seperation(LightSensor, [HearableBarking, Battery], SoundSensor) = True
+
+
+
+iv) The type of network you constructed: tree, polytree (singly-connected network), or
+	multiply-connected network.
+
+	     MULTIPLY-CONNECTED NETWORK

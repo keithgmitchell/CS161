@@ -1,0 +1,157 @@
+;;;; HW1
+;;;; Keith Mitchell-704281781
+;;;; CS161
+;;;; Discussion 1D (SHI, F)
+
+
+;;;;An ordered tree is either a number n or a list (L m R), where 
+;;;;    L and R are ordered trees
+;;;;    m is a number
+;;;;    all numbers appearing in L are smaller than m
+;;;;    all numbers appearing in R are larger than m
+
+;;;;Example Trees: : 3, (1 2 3), ((1 2 3) 7 8), ((1 2 3) 5 (6 8 (9 10 (11 12 13))))
+;;;;(used for testing throughout the problem set)
+;;;----------------------------------------------------------------------------------------------------------------
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 1
+(print "-----------------------------")
+(print "PROBLEM 1")
+;;;
+;;;DESCRIPTION:
+;;;  Write a single Boolean LISP function, called TREE-CONTAINS, which takes two arguments N and
+;;;  TREE, and checks whether number N appears in the ordered tree TREE
+
+
+;;TODO remoodel this and add extra cases
+;;QUESTION
+;;    What is going on witht he t thing here/how are things getting returned
+
+(defun TREE-CONTAINS (N TREE)
+    (if (numberp N)
+
+        (cond ((NULL TREE) NIL) ;first check for an empty TREE value which would yield an automatic NIL
+              ((equal (numberp TREE) T) ;check if TREE is number (individual) and not a list
+               (cond ((equal TREE N) T)
+                     (t NIL)))
+              ;;recursive call to the TREE-CONTAINS fuction 
+              (t (or (TREE-CONTAINS N (first TREE))(TREE-CONTAINS N (second TREE)) (TREE-CONTAINS N (third TREE)))))))
+
+;;;Test Cases for Problem 1
+(print "PROBLEM 1 CASES")
+(format t "1. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+(format t "2. Returns T  = ~a ~%" (TREE-CONTAINS 3 3))
+(format t "3. Returns T  = ~a ~%" (TREE-CONTAINS 3 '((1 2 3) 7 8)))
+(format t "4. Returns NIL  = ~a ~%" (TREE-CONTAINS 4 '((1 2 3) 7 8)))
+(format t "5. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+(format t "6. Returns NIL  = ~a ~%" (TREE-CONTAINS "a" 3))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 2
+(print "-----------------------------")
+(print "PROBLEM 2")
+;;;
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called TREE-MAX, which takes one argument TREE, and returns the
+;;;    maximum number appearing in the ordered tree TREE.
+
+;;TODO Add extra cases, comment
+;;QUESTION 
+;;    How to handles no tree?
+;;    Does it have to be numbers?
+
+(defun TREE-MAX (TREE)
+    (cond ((NULL TREE) NIL)
+          ((numberp TREE) TREE)
+          (t (TREE-MAX (third TREE)))))
+
+;;;Test Cases for Problem 2
+(print "PROBLEM 2 CASES")
+(format t "1. Returns 8  = ~a ~%" (TREE-MAX '((1 2 3) 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 3
+(print "-----------------------------")
+(print "PROBLEM 3")
+;;;
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called TREE-ORDER, which takes one argument TREE, and returns an
+;;;    in-ordered list of the numbers appearing in the ordered tree TREE  
+
+;;;TODO comment and change some stuff
+
+(defun TREE-ORDER (TREE)
+    (cond ((NULL TREE) NIL)
+          ((numberp TREE) (cons TREE NIL))
+          (t (append (TREE-ORDER (first TREE)) (TREE-ORDER(second TREE)) (TREE-ORDER(third TREE))))))
+
+;;;Test Cases for Problem 3
+(print "PROBLEM 3 CASES")
+(format t "1. Returns (1 2 3 7 8)  = ~a ~%" (TREE-ORDER '((1 2 3) 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 4
+(print "-----------------------------")
+(print "PROBLEM 4")
+;;;
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called SUB-LIST, that takes a list L and two non-negative integers
+;;;    START and LEN, and returns the sub-list of L starting at position START and having length LEN. Assume
+;;;    that the first element of L has position 0.  
+
+;;;TODO comment and change some stuff
+
+(defun SUB-LIST (L START LEN)
+    (cond ((NULL L) NIL)
+          ((NULL LEN) NIL)
+          ((not(equal START 0))
+              (SUB-LIST (cdr L) (- START 1) LEN)) ;first get rid of everything up to the start int of list
+          ((not(equal LEN 0))
+              (cons (car L)(SUB-LIST(cdr L) START (- LEN 1)))) ;then 
+          (t NIL)))
+
+;;;Test Cases for Problem 4
+(print "PROBLEM 4 CASES")
+(format t "1. Returns (a b c)  = ~a ~%" (SUB-LIST '(a b c d) 0 3))
+(format t "1. Returns (d)  = ~a ~%" (SUB-LIST '(a b c d) 3 1))
+(format t "1. Returns NIL  = ~a ~%" (SUB-LIST '(a b c d) 2 0))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Problem 5
+(print "-----------------------------")
+(print "PROBLEM 5")
+;;;
+;;;DESCRIPTION:
+;;;    Write a single LISP function, called SPLIT-LIST, that takes a list L, and returns a list of two lists L1 and
+;;;    L2, in that order, such that
+;;;      - L is the result of appending L1 and L2;
+;;;      - Length of L2 minus length of L1 is 0 or 1.
+
+;;;TODO comment and change some stuff
+
+;(defun SPLIT-LIST (L START LEN)
+;    (cond ((NULL L) NIL)
+;          ((NULL LEN) NIL)
+;          ((not(equal START 0))
+;               (SUB-LIST (cdr L) (- START 1) LEN)) ;first get rid of everything up to the start int of list
+;          (t (
+;    ))
+
+;;;Test Cases for Problem 4
+;(print "PROBLEM 4 CASES")
+;(format t "1. Returns (1 2 3 7 8)  = ~a ~%" (TREE-ORDER '((1 2 3) 7 8)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
